@@ -1,12 +1,15 @@
 package com.deepakchatapp.chat_app_backend.Controller;
 
 
+import com.deepakchatapp.chat_app_backend.Entities.Message;
 import com.deepakchatapp.chat_app_backend.Entities.Room;
 import com.deepakchatapp.chat_app_backend.Services.Roomservices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/rooms")
@@ -36,4 +39,15 @@ public class Roomcontroller {
         }
         return ResponseEntity.ok(room);
     }
+    @GetMapping("/{roomId}/messages")
+    public ResponseEntity<List<Message>> getMessages(@PathVariable String roomId){
+        Room room =roomservices.CheckingRoomIdPresent(roomId);
+        if(room==null){
+            return ResponseEntity.badRequest().build();
+        }
+        List<Message> messages=room.getMessage();
+        return ResponseEntity.ok(messages);
+
+    }
+
 }
