@@ -1,14 +1,14 @@
-// import { useState } from 'react'
-// import './App.css'
+
 import { React } from "react";
+import toast from "react-hot-toast";
+import JoinCreateChat from "./Components/JoinCreateChat";
 
 
 function App() {
-  // const [count, setCount] = useState(0)
 
   return (
     <>
-     <h1>Main Page</h1>
+    <JoinCreateChat />
     </>
   )
 }
