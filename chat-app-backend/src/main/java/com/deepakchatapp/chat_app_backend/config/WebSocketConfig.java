@@ -22,7 +22,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry){
         // This below line is used to establish the WebSocket Connection using STOMP(Simple Text Oriented Message Protocol)
         // And SockJs() is used to haldled the fall back of the Websocket
-        registry.addEndpoint("/chat").setAllowedOrigins("http://localhost:3000").withSockJS();
+        registry.addEndpoint("/chat").setAllowedOrigins("http://localhost:5173").withSockJS();
     }
 
 }

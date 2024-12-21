@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.time.LocalDateTime;
 
 @Controller
+@CrossOrigin(origins ="http://localhost:5173")
 public class Chatcontroller {
 
     private RoomRepository roomRepository;
@@ -24,7 +25,6 @@ public class Chatcontroller {
     // for sending and receving messages
     @MessageMapping("/sendMessage/{roomId}")
     @SendTo("topic/room/{roomId}")
-    @CrossOrigin("http://localhost:3000")
     public Message SendMessage(
             @DestinationVariable String roomId
             ,

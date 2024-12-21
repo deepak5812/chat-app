@@ -23,14 +23,14 @@ public class Room {
     @Id
     private String id;
     private String roomId;
-    private List<Message> message;
+    private List<Message> message = new ArrayList<>();
     public Room(){
 
     }
     public Room(String id, String roomId, List<Message> message) {
         this.id = id;
         this.roomId = roomId;
-        this.message = new ArrayList<>();
+        this.message =message==null? new ArrayList<>() : message;
     }
     public String getId() {
         return id;
