@@ -1,21 +1,42 @@
 import { React,useState } from "react";
 import chatIcon from "../assets/open.png";
 import toast from 'react-hot-toast';
-import { createRoomApi } from "./RequestService";
+import { createRoomApi, joinChatApi } from "./RequestService";
+import {useChatContext} from "../Contexts/ChatContext.jsx";
+import { useNavigate } from "react-router";
 function JoinCreateChat(){
     const [details,setDetails]=useState({
         roomId:'',
         userName:'',
     })
+    const navigate=useNavigate();
+    const {roomId,setRoomId,currUser,setCurrUser,connected,setConnected}= useChatContext();
     function handleFormInputChange(event){
         setDetails({
             ...details,
             [event.target.name]:event.target.value,
         })
     }
-    function joinChat(){
+    async function joinChat(){
         if(validateForm()){
-
+           
+            try{
+                const room=await joinChatApi(details.roomId);
+                toast.success("Joined... !!");
+                setCurrUser(details.userName);
+                setRoomId(room.roomId);
+                setConnected(true);
+                navigate('/chat');
+            }catch (error) {
+                console.log("PPPPPPPPPPPp");
+                if(error.status == 400){
+                    toast.error(error.response.data); 
+                }else{
+                toast.error("Room not found.... !!");
+                }
+                console.log(error);
+            }
+           
         }
     }
     async function createRoom(){
@@ -24,7 +45,11 @@ function JoinCreateChat(){
                 const response = await createRoomApi(details.roomId);
                 console.log(response);
                 toast.success("Room Created Successfully !! ");
-                joinChat();
+                setCurrUser(details.userName);
+                setRoomId(response.roomId);
+                setConnected(true);
+                navigate('/chat');
+                // joinChat();
             }   
             catch(error){
                 if(error.status==400){
