@@ -47,6 +47,7 @@ public class Roomcontroller {
             return ResponseEntity.badRequest().build();
         }
         List<Message> messages=room.getMessage();
+
         return ResponseEntity.ok(messages);
 
     }

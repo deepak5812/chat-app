@@ -5,15 +5,15 @@ import java.time.LocalDateTime;
 public class MessageRequest {
 
     private String content;
-    private String sneder;
+    private String sender;
     private String roomId;
     private LocalDateTime messageTime;
 
     public MessageRequest(){}
 
-    public MessageRequest(String content, String sneder, String roomId, LocalDateTime messageTime) {
+    public MessageRequest(String content, String sender, String roomId, LocalDateTime messageTime) {
         this.content = content;
-        this.sneder = sneder;
+        this.sender = sender;
         this.roomId = roomId;
         this.messageTime = messageTime;
     }
@@ -25,12 +25,12 @@ public class MessageRequest {
         this.content = content;
     }
 
-    public String getSneder() {
-        return sneder;
+    public String getSender() {
+        return sender;
     }
 
-    public void setSneder(String sneder) {
-        this.sneder = sneder;
+    public void setSender(String sender) {
+        this.sender = sender;
     }
 
     public String getRoomId() {

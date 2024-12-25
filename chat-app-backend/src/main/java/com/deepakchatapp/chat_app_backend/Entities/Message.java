@@ -8,10 +8,6 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
 public class Message {
 
     private String sender;
@@ -48,7 +44,14 @@ public class Message {
         this.timeStamp = timeStamp;
     }
 
-
+    @Override
+    public String toString() {
+        return "Message{" +
+                "sender='" + sender + '\'' +
+                ", content='" + content + '\'' +
+                ", timeStamp=" + timeStamp +
+                '}';
+    }
 
 
 }

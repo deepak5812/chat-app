@@ -32,9 +32,11 @@ public class Chatcontroller {
     ){
         Room room =roomRepository.findByRoomId(request.getRoomId());
         Message message=new Message();
+
         message.setContent(request.getContent());
-        message.setSender(request.getSneder());
+        message.setSender(request.getSender());
         message.setTimeStamp(LocalDateTime.now());
+        message.toString();
         if(room!=null){
             room.getMessage().add(message);
             roomRepository.save(room);
