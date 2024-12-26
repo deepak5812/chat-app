@@ -6,10 +6,11 @@ import SockJS from "sockjs-client";
 import {baseURL} from '../Routers/AxiosHelper';
 import { Stomp } from "@stomp/stompjs";
 import toast from "react-hot-toast";
+import { timeAgo } from "../Routers/Helper.js";
 function ChatPage(){
 
 
-    const { roomId,currUser,connected}=useChatContext();
+    const { roomId,currUser,connected,setConnected,setRoomId}=useChatContext();
     // console.log(roomId);
     // console.log(currUser);
     // console.log(connected);
@@ -26,9 +27,6 @@ function ChatPage(){
     const [stompClient,setStompClient]=useState(null);
     const [messages,setMessages]=useState([
 
-
-
-
         // {   sender: "Leonor",
         //     content: "Deepak is going to marry to me, only me",
         // },
@@ -41,21 +39,31 @@ function ChatPage(){
        
        
     ]);
+
+    useEffect(() => {
+        async function loadMessages() {
+          try {
+            const messages = await getMessagess(roomId);
+            // console.log(messages);
+            setMessages(messages);
+          } catch (error) {}
+        }
+        if (connected) {
+          loadMessages();
+        }
+      }, []);
+
+      useEffect(() => {
+        if (chatBoxRef.current) {
+          chatBoxRef.current.scroll({
+            top: chatBoxRef.current.scrollHeight,
+            behavior: "smooth",
+          });
+        }
+      }, [messages]);
+
         useEffect(()=>{
             const connectWebSocket=()=>{
- 
-            //     const sock=new SockJS(`${baseURL}/chat`);
-            //     const client=Stomp.over(sock);
-            //     client.connect({},()=>{
-            //         setStompClient(client);
-            //         client.subscribe(`/topic/room/${roomId}`,(message)=>{
-            //             console.log(message);
-            //             const newMessage=JSON.parse(message.body);
-            //             setMessages((prev)=>[...prev,newMessage]);
-            //         })
-            //     });
-            // };
-            // connectWebSocket();
             const sock = new SockJS(`${baseURL}/chat`);
       const client = Stomp.over(sock);
 
@@ -63,16 +71,6 @@ function ChatPage(){
         setStompClient(client);
 
         toast.success("connected");
-
-        // client.subscribe(`/topic/room/${roomId}`, (message) => {
-        //   console.log(message);
-
-        //   const newMessage = JSON.parse(message.body);
-
-        //   setMessages((prev) => [...prev, newMessage]);
-
-        //   //rest of the work after success receiving the message
-        // });
         client.subscribe(`/topic/room/${roomId}`, (message) => {
             console.log("Received message:", message);
             const newMessage = JSON.parse(message.body);
@@ -87,22 +85,28 @@ function ChatPage(){
         },[roomId])
         // Send Message Handled
         const sendMessage= async()=>{
-            console.log(input);
-            console.log(connected);
-            console.log(stompClient);
+            
             if(stompClient && connected && input.trim()){
-                console.log("INSIDE THE IF() CONDITION");
-                console.log(input);
+               
                 const message={
                     sender:currUser,
                     content:input,
-                    roomId:roomId
+                    roomId:roomId,
                 }
-                console.log(JSON.stringify(message));
                 stompClient.send(`/app/sendMessage/${roomId}`,{},JSON.stringify(message));
                 setInput("");
             }
         }
+        
+
+        function handleLogout() {
+            stompClient.disconnect();
+            setConnected(false);
+            setRoomId("");
+            setCurrentUser("");
+            navigate("/");
+          }
+
     return(<>
         <header className="fixed p-1 w-full text-semibold flex justify-between items-center dark:bg-gray-700">
             <div className="ml-4">
@@ -113,7 +117,7 @@ function ChatPage(){
             </div>
             <div className="mr-4">
                 <button className="rounded-full dark:bg-red-600 hover:dark:bg-red-900 p-3"
-                
+                onClick={handleLogout}
                 >
                     LeaveRoom
                 </button>
@@ -130,11 +134,13 @@ function ChatPage(){
 
                         <div className={`my-2 max-w-xs rounded  ${message.sender === currUser ? "dark:bg-green-500":"dark:bg-blue-500"}`}>
                             <div className="flex flex-row gap-2 p-2">
-                                <img className="h-12 w-11 pt-1 pb-1 pl-1" src={`https://avatar.iran.liara.run/username?username=Deepak+Mathur`} alt="DM"/>
+                                <img className="h-12 w-11 pt-1 pb-1 pl-1" src={`https://avatar.iran.liara.run/username?username=${message.sender}`} alt="DM"/>
                                 <div  className="flex flex-col gap-1">
                                     <p className="text-sm font-bold">{message.sender}</p>
                                     <p>{message.content}</p>
-                                    {/* <p className="flex justify-end">Time</p> */}
+                                    <p className="text-xs text-gray-700">
+                                    {timeAgo(message.timeStamp)}
+                                    </p>
                                 </div>
 
                             </div>
